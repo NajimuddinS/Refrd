@@ -54,10 +54,10 @@ const getCandidateResume = async (req, res) => {
     }
 
     // Option 1: Redirect to the S3 URL (simplest solution)
-    return res.redirect(candidate.resumeUrl);
+    // return res.redirect(candidate.resumeUrl);
 
     // Option 2: Proxy the file through your server (if CORS issues persist)
-    /*
+
     const s3Response = await fetch(candidate.resumeUrl);
     
     // Set appropriate headers
@@ -66,7 +66,6 @@ const getCandidateResume = async (req, res) => {
     
     // Stream the file to the client
     s3Response.body.pipe(res);
-    */
     
   } catch (error) {
     console.error('Error fetching resume:', error);
