@@ -10,10 +10,7 @@ const candidateRoutes = require('./routes/candidateRoutes');
 
 const app = express();
 
-app.use(cors({
-  origin: true, // Allow only your frontend origin
-  credentials: true // If you're using cookies/sessions
-}));
+app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use('/api/candidates', candidateRoutes);
