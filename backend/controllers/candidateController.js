@@ -48,16 +48,19 @@ const getAllCandidates = async (req, res) => {
 const getCandidateResume = async (req, res) => {
   try {
     const candidate = await Candidate.findById(req.params.id);
-    if (!candidate || !candidate.resume) {
+    
+    if (!candidate || !candidate.resumeUrl) {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    // Set appropriate headers
-    res.setHeader('Content-Type', candidate.resume.contentType);
-    res.setHeader('Content-Disposition', `attachment; filename=${candidate.resume.name}`);
-
-    // Send the file buffer
-    res.send(candidate.resume.data);
+    // Redirect to the resume URL (if stored externally)
+    res.redirect(candidate.resumeUrl);
+    
+    // OR if you want to force download:
+    // const fileName = candidate.resumeUrl.split('/').pop();
+    // res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    // res.redirect(candidate.resumeUrl);
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

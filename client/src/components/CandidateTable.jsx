@@ -1,14 +1,28 @@
-const CandidateTable = ({ candidates, loading, onStatusUpdate, onDeleteCandidate }) => {
+import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
+
+const CandidateTable = ({ 
+  candidates, 
+  loading, 
+  onStatusUpdate, 
+  onDeleteCandidate, 
+  onViewResume,
+  searchTerm,
+  showAll = false // Default to false if not provided
+}) => {
   const getStatusBadge = (status) => {
+    const baseClasses = "text-xs font-medium rounded-full px-3 py-1";
+    
     switch (status) {
       case 'Pending':
-        return 'status-pending';
+        return `${baseClasses} bg-yellow-100 text-yellow-800`;
       case 'Reviewed':
-        return 'status-reviewed';
+        return `${baseClasses} bg-blue-100 text-blue-800`;
       case 'Hired':
-        return 'status-hired';
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case 'Rejected':
+        return `${baseClasses} bg-red-100 text-red-800`;
       default:
-        return 'status-pending';
+        return `${baseClasses} bg-gray-100 text-gray-800`;
     }
   };
 
@@ -19,7 +33,7 @@ const CandidateTable = ({ candidates, loading, onStatusUpdate, onDeleteCandidate
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -28,10 +42,12 @@ const CandidateTable = ({ candidates, loading, onStatusUpdate, onDeleteCandidate
     return (
       <div className="text-center py-12">
         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No candidates</h3>
-        <p className="mt-1 text-sm text-gray-500">Get started by referring a new candidate.</p>
+        <h3 className="mt-2 text-lg font-medium text-gray-900">No candidates found</h3>
+        <p className="mt-1 text-sm text-gray-500">
+          {searchTerm ? 'Try adjusting your search or filter' : 'Get started by referring a new candidate'}
+        </p>
       </div>
     );
   }
@@ -41,76 +57,89 @@ const CandidateTable = ({ candidates, loading, onStatusUpdate, onDeleteCandidate
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="table-header">Name</th>
-            <th className="table-header">Email</th>
-            <th className="table-header">Phone</th>
-            <th className="table-header">Job Title</th>
-            <th className="table-header">Status</th>
-            <th className="table-header">Resume</th>
-            <th className="table-header">Actions</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Candidate
+            </th>
+            {showAll && (
+              <>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Contact Info
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Job Details
+                </th>
+              </>
+            )}
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {candidates.map((candidate) => (
             <tr key={candidate._id} className="hover:bg-gray-50">
-              <td className="table-cell">
+              <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-700">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <span className="text-indigo-600 font-medium">
                       {candidate.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {new Date(candidate.createdAt).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
               </td>
-              <td className="table-cell">
-                <div className="text-sm text-gray-900">{candidate.email}</div>
-              </td>
-              <td className="table-cell">
-                <div className="text-sm text-gray-900">{candidate.phone}</div>
-              </td>
-              <td className="table-cell">
-                <div className="text-sm text-gray-900">{candidate.jobTitle}</div>
-              </td>
-              <td className="table-cell">
+              
+              {showAll && (
+                <>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{candidate.email}</div>
+                    <div className="text-sm text-gray-500">{candidate.phone || 'N/A'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{candidate.jobTitle}</div>
+                    <div className="text-sm text-gray-500">{candidate.jobDepartment || 'N/A'}</div>
+                  </td>
+                </>
+              )}
+              
+              <td className="px-6 py-4 whitespace-nowrap">
                 <select
                   value={candidate.status}
-                  onChange={(e) => handleStatusChange(candidate._id, e.target.value)}
-                  className={`text-xs font-medium rounded-full px-2 py-1 ${getStatusBadge(candidate.status)} border-none outline-none`}
+                  onChange={(e) => onStatusUpdate(candidate._id, e.target.value)}
+                  className={getStatusBadge(candidate.status)}
                 >
                   <option value="Pending">Pending</option>
                   <option value="Reviewed">Reviewed</option>
                   <option value="Hired">Hired</option>
+                  <option value="Rejected">Rejected</option>
                 </select>
               </td>
-              <td className="table-cell">
-                {candidate.resume ? (
-                  <a
-                    href={candidate.resume}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-900"
+              
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => onViewResume(candidate._id)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                    title="View resume"
                   >
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </a>
-                ) : (
-                  <span className="text-gray-400">No resume</span>
-                )}
-              </td>
-              <td className="table-cell text-right text-sm font-medium">
-                <button
-                  onClick={() => onDeleteCandidate(candidate._id)}
-                  className="text-red-600 hover:text-red-900"
-                  title="Delete candidate"
-                >
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+                    <EyeIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => onDeleteCandidate(candidate._id)}
+                    className="text-red-600 hover:text-red-900"
+                    title="Delete candidate"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
