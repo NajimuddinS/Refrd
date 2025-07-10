@@ -54,9 +54,9 @@ const getCandidateResume = async (req, res) => {
     }
 
     // Set CORS headers specifically for this endpoint
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.setHeader('Access-Control-Allow-Origin', 'https://refrd.vercel.app');
-    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    // res.setHeader('Access-Control-Allow-Origin', 'https://refrd.vercel.app');
+    // res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
     
     // If you're redirecting to a URL
     res.redirect(302, candidate.resumeUrl);

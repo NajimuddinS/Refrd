@@ -1,22 +1,14 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require('cors');
-
 const MongoDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require('./routes/candidateRoutes');
 
-
-
 const app = express();
 
-const corsOptions = {
-  origin: '*', // Add all allowed origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200 // For legacy browser support
-};
+// Minimal CORS (Allow all origins)
+app.use(cors()); // Just this line (no config object)
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
