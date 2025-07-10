@@ -2,6 +2,8 @@ const Candidate = require('../models/Candidate');
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const s3 = require("../utils/s3");
+const https = require('https');
+const { URL } = require('url');
 // Create
 const createCandidate = async (req, res) => {
   try {
@@ -53,19 +55,20 @@ const getCandidateResume = async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    // Option 1: Redirect to the S3 URL (simplest solution)
-    // return res.redirect(candidate.resumeUrl);
-
-    // Option 2: Proxy the file through your server (if CORS issues persist)
-
-    const s3Response = await fetch(candidate.resumeUrl);
+    // Parse the S3 URL
+    const s3Url = new URL(candidate.resumeUrl);
     
-    // Set appropriate headers
-    res.setHeader('Content-Type', s3Response.headers.get('content-type') || 'application/pdf');
+    // Set headers for the client
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${candidate.name}_resume.pdf"`);
-    
-    // Stream the file to the client
-    s3Response.body.pipe(res);
+
+    // Proxy the request using native Node.js https
+    https.get(s3Url, (s3Response) => {
+      s3Response.pipe(res);
+    }).on('error', (err) => {
+      console.error('S3 request error:', err);
+      res.status(500).json({ message: 'Error fetching resume' });
+    });
     
   } catch (error) {
     console.error('Error fetching resume:', error);
