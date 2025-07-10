@@ -6,13 +6,14 @@ const {
   getAllCandidates,
   getCandidateById,
   updateCandidate,
-  deleteCandidate
+  deleteCandidate,
+  getCandidateResume
 } = require('../controllers/candidateController');
 
 router.post('/', upload.single('resume'), createCandidate);
-
 router.get('/', getAllCandidates);
 router.get('/:id', getCandidateById);
+router.get('/:id/resume', getCandidateResume);
 router.put('/:id',upload.single('resume'), updateCandidate);
 router.delete('/:id', deleteCandidate);
 

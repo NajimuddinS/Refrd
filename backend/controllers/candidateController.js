@@ -45,6 +45,24 @@ const getAllCandidates = async (req, res) => {
   }
 };
 
+const getCandidateResume = async (req, res) => {
+  try {
+    const candidate = await Candidate.findById(req.params.id);
+    if (!candidate || !candidate.resume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+
+    // Set appropriate headers
+    res.setHeader('Content-Type', candidate.resume.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename=${candidate.resume.name}`);
+
+    // Send the file buffer
+    res.send(candidate.resume.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Read One
 const getCandidateById = async (req, res) => {
   try {
@@ -132,5 +150,6 @@ module.exports = {
   getAllCandidates,
   getCandidateById,
   updateCandidate,
-  deleteCandidate
+  deleteCandidate,
+  getCandidateResume
 };
