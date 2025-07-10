@@ -53,13 +53,17 @@ const getCandidateResume = async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    // Redirect to the resume URL (if stored externally)
-    res.redirect(candidate.resumeUrl);
+    // Set CORS headers specifically for this endpoint
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Origin', 'https://refrd.vercel.app');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
     
-    // OR if you want to force download:
-    // const fileName = candidate.resumeUrl.split('/').pop();
-    // res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    // res.redirect(candidate.resumeUrl);
+    // If you're redirecting to a URL
+    res.redirect(302, candidate.resumeUrl);
+    
+    // OR if serving the file directly
+    // const filePath = path.resolve(__dirname, '..', candidate.resumeUrl);
+    // res.download(filePath);
     
   } catch (error) {
     res.status(500).json({ message: error.message });
