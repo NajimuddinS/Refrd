@@ -53,10 +53,8 @@ const getCandidateResume = async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    // Set CORS headers specifically for this endpoint
-    // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-    // res.setHeader('Access-Control-Allow-Origin', 'https://refrd.vercel.app');
-    // res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.setHeader('Content-Type', response.headers.get('content-type'));
+    res.setHeader('Content-Disposition', `attachment; filename="resume.pdf"`);
     
     // If you're redirecting to a URL
     res.redirect(302, candidate.resumeUrl);
