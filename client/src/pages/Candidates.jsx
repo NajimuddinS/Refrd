@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import CandidateTable from '../components/CandidateTable';
 import ReferralModal from '../components/ReferralModal';
+import UpdateCandidateModal from '../components/UpdateCandidateModal';
 
 const Candidates = () => {
   const [candidates, setCandidates] = useState([]);
@@ -10,6 +11,8 @@ const Candidates = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedResume, setSelectedResume] = useState(null);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     fetchCandidates();
@@ -49,6 +52,69 @@ const Candidates = () => {
       }
     } catch (error) {
       console.error('Error fetching resume:', error);
+    }
+  };
+
+  const handleUpdateCandidate = (candidate) => {
+    setSelectedCandidate(candidate);
+    setShowUpdateModal(true);
+  };
+
+  const handleUpdateSubmit = async (updatedData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      
+      // Append all updated fields to formData
+      Object.keys(updatedData).forEach(key => {
+        if (key !== 'resume' && updatedData[key] !== undefined) {
+          formData.append(key, updatedData[key]);
+        }
+      });
+      
+      // Append resume file if it exists
+      if (updatedData.resume) {
+        formData.append('resume', updatedData.resume);
+      }
+
+      const response = await fetch(`https://refrd.onrender.com/api/candidates/${selectedCandidate._id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        fetchCandidates();
+        setShowUpdateModal(false);
+      } else {
+        console.error('Failed to update candidate');
+      }
+    } catch (error) {
+      console.error('Error updating candidate:', error);
+    }
+  };
+
+  const handleDeleteCandidate = async (candidateId) => {
+    if (window.confirm('Are you sure you want to delete this candidate?')) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`https://refrd.onrender.com/api/candidates/${candidateId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          fetchCandidates();
+        } else {
+          console.error('Failed to delete candidate');
+        }
+      } catch (error) {
+        console.error('Error deleting candidate:', error);
+      }
     }
   };
 
@@ -131,6 +197,8 @@ const Candidates = () => {
             loading={loading}
             searchTerm={searchTerm}
             onViewResume={viewResume}
+            onUpdateCandidate={handleUpdateCandidate}
+            onDeleteCandidate={handleDeleteCandidate}
           />
         </div>
 
@@ -138,6 +206,14 @@ const Candidates = () => {
           <ReferralModal
             onClose={() => setShowReferralModal(false)}
             onSubmit={handleReferralSubmit}
+          />
+        )}
+
+        {showUpdateModal && selectedCandidate && (
+          <UpdateCandidateModal
+            candidate={selectedCandidate}
+            onClose={() => setShowUpdateModal(false)}
+            onSubmit={handleUpdateSubmit}
           />
         )}
 
