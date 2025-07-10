@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import Candidates from "./pages/Candidates";
+import Candidates from "./pages/Candidates.jsx";
 
 function App() {
   return (

@@ -1,4 +1,6 @@
-import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import ConfirmationModal from './ConfirmationModal';
 
 const CandidateTable = ({ 
   candidates, 
@@ -6,28 +8,38 @@ const CandidateTable = ({
   onStatusUpdate, 
   onDeleteCandidate, 
   onViewResume,
+  onEditCandidate,
   searchTerm,
-  showAll = false // Default to false if not provided
+  showAll = false
 }) => {
-  const getStatusBadge = (status) => {
-    const baseClasses = "text-xs font-medium rounded-full px-3 py-1";
-    
-    switch (status) {
-      case 'Pending':
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
-      case 'Reviewed':
-        return `${baseClasses} bg-blue-100 text-blue-800`;
-      case 'Hired':
-        return `${baseClasses} bg-green-100 text-green-800`;
-      case 'Rejected':
-        return `${baseClasses} bg-red-100 text-red-800`;
-      default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
-    }
+  const [deleteCandidateId, setDeleteCandidateId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const statusOptions = [
+    { value: 'Pending', label: 'Pending', color: 'yellow' },
+    { value: 'Reviewed', label: 'Reviewed', color: 'blue' },
+    { value: 'Hired', label: 'Hired', color: 'green' },
+    { value: 'Rejected', label: 'Rejected', color: 'red' }
+  ];
+
+  const getStatusClasses = (status) => {
+    const option = statusOptions.find(opt => opt.value === status) || {};
+    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${option.color}-100 text-${option.color}-800`;
   };
 
-  const handleStatusChange = (candidateId, newStatus) => {
-    onStatusUpdate(candidateId, newStatus);
+  const handleDeleteClick = (candidateId) => {
+    setDeleteCandidateId(candidateId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDeleteCandidate(deleteCandidateId);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteCandidateId(null);
   };
 
   if (loading) {
@@ -40,7 +52,7 @@ const CandidateTable = ({
 
   if (candidates.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 bg-white rounded-lg shadow-sm">
         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -53,99 +65,125 @@ const CandidateTable = ({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Candidate
-            </th>
-            {showAll && (
-              <>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Job Details
-                </th>
-              </>
-            )}
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {candidates.map((candidate) => (
-            <tr key={candidate._id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <span className="text-indigo-600 font-medium">
-                      {candidate.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {new Date(candidate.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              
+    <>
+      <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+        <table className="min-w-full divide-y divide-gray-300">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                Candidate
+              </th>
               {showAll && (
                 <>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{candidate.email}</div>
-                    <div className="text-sm text-gray-500">{candidate.phone || 'N/A'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{candidate.jobTitle}</div>
-                    <div className="text-sm text-gray-500">{candidate.jobDepartment || 'N/A'}</div>
-                  </td>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Contact Info
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Job Details
+                  </th>
                 </>
               )}
-              
-              <td className="px-6 py-4 whitespace-nowrap">
-                <select
-                  value={candidate.status}
-                  onChange={(e) => onStatusUpdate(candidate._id, e.target.value)}
-                  className={getStatusBadge(candidate.status)}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Reviewed">Reviewed</option>
-                  <option value="Hired">Hired</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
-              </td>
-              
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => onViewResume(candidate._id)}
-                    className="text-indigo-600 hover:text-indigo-900"
-                    title="View resume"
-                  >
-                    <EyeIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteCandidate(candidate._id)}
-                    className="text-red-600 hover:text-red-900"
-                    title="Delete candidate"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              </td>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                Status
+              </th>
+              <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white">
+            {candidates.map((candidate) => (
+              <tr key={candidate._id} className="hover:bg-gray-50">
+                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 flex-shrink-0">
+                      <div className="h-full w-full rounded-full bg-indigo-100 flex items-center justify-center">
+                        <span className="text-indigo-600 font-medium">
+                          {candidate.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <div className="font-medium text-gray-900">{candidate.name}</div>
+                      <div className="text-gray-500">
+                        Added {new Date(candidate.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                
+                {showAll && (
+                  <>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <div className="text-gray-900">{candidate.email}</div>
+                      <div>{candidate.phone || 'Not provided'}</div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <div className="font-medium text-gray-900">{candidate.jobTitle}</div>
+                      <div>{candidate.jobDepartment || 'N/A'}</div>
+                    </td>
+                  </>
+                )}
+                
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <select
+                    value={candidate.status}
+                    onChange={(e) => onStatusUpdate(candidate._id, e.target.value)}
+                    className={getStatusClasses(candidate.status)}
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                
+                <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => onViewResume(candidate._id)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                      title="View resume"
+                    >
+                      <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                      <span className="sr-only">View resume for {candidate.name}</span>
+                    </button>
+                    <button
+                      onClick={() => onEditCandidate(candidate)}
+                      className="text-gray-600 hover:text-gray-900"
+                      title="Edit candidate"
+                    >
+                      <PencilIcon className="h-5 w-5" aria-hidden="true" />
+                      <span className="sr-only">Edit {candidate.name}</span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(candidate._id)}
+                      className="text-red-600 hover:text-red-900"
+                      title="Delete candidate"
+                    >
+                      <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                      <span className="sr-only">Delete {candidate.name}</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Candidate"
+        message="Are you sure you want to delete this candidate? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        danger={true}
+      />
+    </>
   );
 };
 
