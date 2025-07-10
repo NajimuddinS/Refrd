@@ -7,10 +7,7 @@ const candidateRoutes = require('./routes/candidateRoutes');
 
 const app = express();
 
-app.use(cors({
-  origin:true,
-  credentials:true
-})); 
+app.use(cors()); 
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
