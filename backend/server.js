@@ -10,7 +10,14 @@ const candidateRoutes = require('./routes/candidateRoutes');
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://refrd.vercel.app'], // Add all allowed origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use('/api/candidates', candidateRoutes);
