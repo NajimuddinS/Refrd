@@ -53,17 +53,23 @@ const getCandidateResume = async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    res.setHeader('Content-Type', response.headers.get('content-type'));
-    res.setHeader('Content-Disposition', `attachment; filename="resume.pdf"`);
+    // Option 1: Redirect to the S3 URL (simplest solution)
+    return res.redirect(candidate.resumeUrl);
+
+    // Option 2: Proxy the file through your server (if CORS issues persist)
+    /*
+    const s3Response = await fetch(candidate.resumeUrl);
     
-    // If you're redirecting to a URL
-    res.redirect(302, candidate.resumeUrl);
+    // Set appropriate headers
+    res.setHeader('Content-Type', s3Response.headers.get('content-type') || 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${candidate.name}_resume.pdf"`);
     
-    // OR if serving the file directly
-    // const filePath = path.resolve(__dirname, '..', candidate.resumeUrl);
-    // res.download(filePath);
+    // Stream the file to the client
+    s3Response.body.pipe(res);
+    */
     
   } catch (error) {
+    console.error('Error fetching resume:', error);
     res.status(500).json({ message: error.message });
   }
 };
