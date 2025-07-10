@@ -129,7 +129,13 @@ const Layout = ({ children }) => {
             <nav className="mt-5 flex-1 px-2 space-y-1 bg-white">
               <NavLink
                 to="/dashboard"
-                className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                className={({ isActive }) =>
+                  `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    isActive
+                      ? "text-gray-900 bg-gray-100"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`
+                }
               >
                 <svg
                   className="mr-3 h-6 w-6 text-gray-400"
@@ -148,10 +154,16 @@ const Layout = ({ children }) => {
               </NavLink>
               <NavLink
                 to="/candidates"
-                className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-900 bg-gray-100"
+                className={({ isActive }) =>
+                  `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    isActive
+                      ? "text-gray-900 bg-gray-100"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`
+                }
               >
                 <svg
-                  className="mr-3 h-6 w-6 text-gray-500"
+                  className="mr-3 h-6 w-6 text-gray-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
