@@ -11,16 +11,21 @@ const Layout = ({ children }) => {
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Mobile sidebar */}
       <div
-        className={`md:hidden fixed inset-0 z-40 ${
-          sidebarOpen ? "block" : "hidden"
+        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-300 ${
+          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="fixed inset-0 flex z-40">
-          <div className="relative flex-1 flex flex-col w-64 bg-gray-800">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity" />
+        <div className="fixed inset-0 flex z-40 transform transition ease-in-out duration-300">
+          <div
+            className={`relative flex-1 flex flex-col w-64 max-w-xs bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 type="button"
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white hover:bg-gray-600 transition-colors"
                 onClick={() => setSidebarOpen(false)}
               >
                 <span className="sr-only">Close sidebar</span>
@@ -41,21 +46,33 @@ const Layout = ({ children }) => {
             </div>
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
-                <h1 className="text-white text-xl font-bold">RefRD</h1>
+                <div className="flex items-center">
+                  <span className="bg-gradient-to-r from-blue-400 to-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-tighter">
+                    <span className="text-blue-200">R</span>
+                    <span className="text-blue-100">e</span>
+                    <span className="text-indigo-100">f</span>
+                    <span className="text-indigo-200">r</span>
+                    <span className="text-indigo-300">d</span>
+                  </span>
+                </div>
               </div>
-              <nav className="mt-5 flex-1 px-2 space-y-1 bg-white">
+              <nav className="mt-8 px-2 space-y-1">
                 <NavLink
                   to="/dashboard"
                   className={({ isActive }) =>
-                    `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    `group flex items-center px-3 py-3 text-sm font-medium rounded-lg mx-2 transition-colors ${
                       isActive
-                        ? "text-gray-900 bg-gray-100"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        ? "bg-gray-700 text-white shadow-md"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
                     }`
                   }
                 >
                   <svg
-                    className="mr-3 h-6 w-6 text-gray-400"
+                    className={`mr-4 h-5 w-5 flex-shrink-0 ${
+                      location.pathname === "/dashboard" 
+                        ? "text-blue-400" 
+                        : "text-gray-400 group-hover:text-blue-300"
+                    }`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -72,15 +89,19 @@ const Layout = ({ children }) => {
                 <NavLink
                   to="/candidates"
                   className={({ isActive }) =>
-                    `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    `group flex items-center px-3 py-3 text-sm font-medium rounded-lg mx-2 transition-colors ${
                       isActive
-                        ? "text-gray-900 bg-gray-100"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        ? "bg-gray-700 text-white shadow-md"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
                     }`
                   }
                 >
                   <svg
-                    className="mr-3 h-6 w-6 text-gray-400"
+                    className={`mr-4 h-5 w-5 flex-shrink-0 ${
+                      location.pathname === "/candidates" 
+                        ? "text-blue-400" 
+                        : "text-gray-400 group-hover:text-blue-300"
+                    }`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -97,22 +118,41 @@ const Layout = ({ children }) => {
               </nav>
             </div>
             <div className="flex-shrink-0 flex border-t border-gray-700 p-4">
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
                     <span className="text-white font-medium">
                       {user?.name?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
                 </div>
                 <div className="ml-3">
-                  <p className="text-base font-medium text-white">
+                  <p className="text-sm font-medium text-white truncate max-w-[140px]">
                     {user?.name}
                   </p>
-                  <p className="text-sm font-medium text-gray-400">
+                  <p className="text-xs font-medium text-gray-300 truncate max-w-[140px]">
                     {user?.email}
                   </p>
                 </div>
+                <button
+                  onClick={logout}
+                  className="ml-auto flex-shrink-0 p-1 rounded-full text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                  title="Logout"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -121,24 +161,36 @@ const Layout = ({ children }) => {
 
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64 border-r border-gray-200 bg-white">
+        <div className="flex flex-col w-64 border-r border-gray-200 bg-gradient-to-b from-gray-800 to-gray-900 shadow-lg">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-              <h1 className="text-xl font-bold text-gray-900">RefRD</h1>
+              <div className="flex items-center">
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-tighter shadow-md">
+                  <span className="text-blue-200">R</span>
+                  <span className="text-blue-100">e</span>
+                  <span className="text-indigo-100">f</span>
+                  <span className="text-indigo-200">r</span>
+                  <span className="text-indigo-300">d</span>
+                </span>
+              </div>
             </div>
-            <nav className="mt-5 flex-1 px-2 space-y-1 bg-white">
+            <nav className="mt-8 px-2 space-y-1">
               <NavLink
                 to="/dashboard"
                 className={({ isActive }) =>
-                  `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  `group flex items-center px-3 py-3 text-sm font-medium rounded-lg mx-2 transition-colors ${
                     isActive
-                      ? "text-gray-900 bg-gray-100"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-gray-700 text-white shadow-md"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
                   }`
                 }
               >
                 <svg
-                  className="mr-3 h-6 w-6 text-gray-400"
+                  className={`mr-4 h-5 w-5 flex-shrink-0 ${
+                    location.pathname === "/dashboard" 
+                      ? "text-blue-400" 
+                      : "text-gray-400 group-hover:text-blue-300"
+                  }`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -155,15 +207,19 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/candidates"
                 className={({ isActive }) =>
-                  `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  `group flex items-center px-3 py-3 text-sm font-medium rounded-lg mx-2 transition-colors ${
                     isActive
-                      ? "text-gray-900 bg-gray-100"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-gray-700 text-white shadow-md"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
                   }`
                 }
               >
                 <svg
-                  className="mr-3 h-6 w-6 text-gray-400"
+                  className={`mr-4 h-5 w-5 flex-shrink-0 ${
+                    location.pathname === "/candidates" 
+                      ? "text-blue-400" 
+                      : "text-gray-400 group-hover:text-blue-300"
+                  }`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -179,26 +235,26 @@ const Layout = ({ children }) => {
               </NavLink>
             </nav>
           </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+          <div className="flex-shrink-0 flex border-t border-gray-700 p-4">
             <div className="flex items-center w-full">
               <div className="flex-shrink-0">
-                <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center">
-                  <span className="text-indigo-600 font-medium">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                  <span className="text-white font-medium">
                     {user?.name?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-white truncate max-w-[140px]">
                   {user?.name}
                 </p>
-                <p className="text-xs font-medium text-gray-500">
+                <p className="text-xs font-medium text-gray-300 truncate max-w-[140px]">
                   {user?.email}
                 </p>
               </div>
               <button
                 onClick={logout}
-                className="ml-1 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="ml-auto flex-shrink-0 p-1 rounded-full text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                 title="Logout"
               >
                 <svg
@@ -244,8 +300,10 @@ const Layout = ({ children }) => {
             </svg>
           </button>
         </div>
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none bg-gray-50">
-          {children}
+        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="py-6 px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
         </main>
       </div>
     </div>

@@ -97,51 +97,15 @@ const Candidates = () => {
     setShowUpdateModal(true);
   };
 
-  // const handleUpdateSubmit = async (formData) => {
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const response = await fetch(
-  //       `https://refrd.onrender.com/api/candidates/${selectedCandidate._id}`,
-  //       {
-  //         method: 'PUT',
-  //         headers: {
-  //           'Authorization': `Bearer ${token}`,
-  //         },
-  //         body: formData,
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.message || 'Failed to update candidate');
-  //     }
-
-  //     const updatedCandidate = await response.json();
-
-  //     setCandidates(candidates.map(c =>
-  //       c._id === updatedCandidate._id ? updatedCandidate : c
-  //     ));
-
-  //     setShowUpdateModal(false);
-  //     alert('Candidate updated successfully');
-  //   } catch (error) {
-  //     console.error('Error updating candidate:', error);
-  //     alert(error.message || 'Failed to update candidate');
-  //   }
-  // };
-
   const handleUpdateSubmit = async (formData) => {
     try {
-      const token = localStorage.getItem("token");
-
-      // If you're sending FormData, don't set Content-Type header
-      // The browser will set it automatically with the correct boundary
+      const token = localStorage.getItem('token');
       const response = await fetch(
         `https://refrd.onrender.com/api/candidates/${selectedCandidate._id}`,
         {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
           },
           body: formData,
         }
@@ -149,58 +113,88 @@ const Candidates = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update candidate");
+        throw new Error(errorData.message || 'Failed to update candidate');
       }
 
       const updatedCandidate = await response.json();
 
-      // Update the candidates state
-      setCandidates(
-        candidates.map((c) =>
-          c._id === updatedCandidate._id ? updatedCandidate : c
-        )
-      );
+      setCandidates(candidates.map(c =>
+        c._id === updatedCandidate._id ? updatedCandidate : c
+      ));
 
       setShowUpdateModal(false);
-      alert("Candidate updated successfully");
+      alert('Candidate updated successfully');
     } catch (error) {
-      console.error("Error updating candidate:", error);
-      alert(error.message || "Failed to update candidate");
+      console.error('Error updating candidate:', error);
+      alert(error.message || 'Failed to update candidate');
     }
   };
 
-  const handleStatusUpdate = async (candidateId, newStatus) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `https://refrd.onrender.com/api/candidates/${candidateId}/status`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+  // const handleUpdateSubmit = async (formData) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
 
-      if (!response.ok) {
-        throw new Error("Failed to update status");
+  //     // If you're sending FormData, don't set Content-Type header
+  //     // The browser will set it automatically with the correct boundary
+  //     const response = await fetch(
+  //       `https://refrd.onrender.com/api/candidates/${selectedCandidate._id}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: formData,
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.message || "Failed to update candidate");
+  //     }
+
+  //     const updatedCandidate = await response.json();
+
+  //     // Update the candidates state
+  //     setCandidates(
+  //       candidates.map((c) =>
+  //         c._id === updatedCandidate._id ? updatedCandidate : c
+  //       )
+  //     );
+
+  //     setShowUpdateModal(false);
+  //     alert("Candidate updated successfully");
+  //   } catch (error) {
+  //     console.error("Error updating candidate:", error);
+  //     alert(error.message || "Failed to update candidate");
+  //   }
+  // };
+
+const handleStatusUpdate = async (candidateId, newStatus) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `https://refrd.onrender.com/api/candidates/${candidateId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
       }
+    );
 
-      const updatedCandidate = await response.json();
+    if (!response.ok) throw new Error("Failed to update status");
 
-      // Update the candidates state
-      setCandidates(
-        candidates.map((c) =>
-          c._id === updatedCandidate._id ? updatedCandidate : c
-        )
-      );
-    } catch (error) {
-      console.error("Error updating status:", error);
-      alert("Failed to update candidate status");
-    }
-  };
+    const updatedCandidate = await response.json();
+    setCandidates(candidates.map(c => 
+      c._id === updatedCandidate._id ? updatedCandidate : c
+    ));
+  } catch (error) {
+    console.error("Error updating status:", error);
+    alert("Failed to update candidate status");
+  }
+};
 
   const handleDeleteCandidate = async (candidateId) => {
     if (window.confirm("Are you sure you want to delete this candidate?")) {
@@ -313,7 +307,7 @@ const Candidates = () => {
         )}
 
         {selectedResume && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-auto">
               <div className="flex justify-between items-center border-b p-4">
                 <h3 className="text-lg font-medium text-gray-900">
