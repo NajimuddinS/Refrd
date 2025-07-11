@@ -147,6 +147,31 @@ const updateCandidate = async (req, res) => {
   }
 };
 
+// Public: Get candidate status by email
+const getCandidateStatusByEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const candidate = await Candidate.findOne({ email });
+
+    if (!candidate) {
+      return res.status(404).json({ status: 'notFound' });
+    }
+
+    // You can customize this based on status field or other business logic
+    return res.json({
+      status: candidate.status || 'pending', // default fallback
+      name: candidate.name,
+      jobTitle: candidate.jobTitle
+    });
+  } catch (err) {
+    console.error("Error checking referral status:", err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 // Delete
 const deleteCandidate = async (req, res) => {
   try {
@@ -164,5 +189,6 @@ module.exports = {
   getCandidateById,
   updateCandidate,
   deleteCandidate,
-  getCandidateResume
+  getCandidateResume,
+  getCandidateStatusByEmail
 };

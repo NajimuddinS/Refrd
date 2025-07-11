@@ -7,7 +7,8 @@ const {
   getCandidateById,
   updateCandidate,
   deleteCandidate,
-  getCandidateResume
+  getCandidateResume,
+  getCandidateStatusByEmail
 } = require('../controllers/candidateController');
 
 router.post('/', upload.single('resume'), createCandidate);
@@ -16,5 +17,7 @@ router.get('/:id', getCandidateById);
 router.get('/:id/resume', getCandidateResume);
 router.put('/:id',upload.single('resume'), updateCandidate);
 router.delete('/:id', deleteCandidate);
+router.get('/status/check', getCandidateStatusByEmail);
+
 
 module.exports = router;
