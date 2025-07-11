@@ -1,29 +1,30 @@
-import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import ConfirmationModal from './ConfirmationModal';
+import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import ConfirmationModal from "./ConfirmationModal";
 
-const CandidateTable = ({ 
-  candidates, 
-  loading, 
-  onStatusUpdate, 
-  onDeleteCandidate, 
+const CandidateTable = ({
+  candidates,
+  loading,
+  onStatusUpdate,
+  onDeleteCandidate,
   onViewResume,
   onUpdateCandidate,
   searchTerm,
-  showAll = false
+  showAll = false,
 }) => {
   const [deleteCandidateId, setDeleteCandidateId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [loadingResumeId, setLoadingResumeId] = useState(null);
 
   const statusOptions = [
-    { value: 'Pending', label: 'Pending', color: 'yellow' },
-    { value: 'Reviewed', label: 'Reviewed', color: 'blue' },
-    { value: 'Hired', label: 'Hired', color: 'green' },
-    { value: 'Rejected', label: 'Rejected', color: 'red' }
+    { value: "Pending", label: "Pending", color: "yellow" },
+    { value: "Reviewed", label: "Reviewed", color: "blue" },
+    { value: "Hired", label: "Hired", color: "green" },
+    { value: "Rejected", label: "Rejected", color: "red" },
   ];
 
   const getStatusClasses = (status) => {
-    const option = statusOptions.find(opt => opt.value === status) || {};
+    const option = statusOptions.find((opt) => opt.value === status) || {};
     return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${option.color}-100 text-${option.color}-800`;
   };
 
@@ -53,12 +54,26 @@ const CandidateTable = ({
   if (candidates.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
-        <h3 className="mt-2 text-lg font-medium text-gray-900">No candidates found</h3>
+        <h3 className="mt-2 text-lg font-medium text-gray-900">
+          No candidates found
+        </h3>
         <p className="mt-1 text-sm text-gray-500">
-          {searchTerm ? 'Try adjusting your search or filter' : 'Get started by referring a new candidate'}
+          {searchTerm
+            ? "Try adjusting your search or filter"
+            : "Get started by referring a new candidate"}
         </p>
       </div>
     );
@@ -70,20 +85,32 @@ const CandidateTable = ({
         <table className="min-w-full divide-y divide-gray-300">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+              <th
+                scope="col"
+                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+              >
                 Candidate
               </th>
               {showAll && (
                 <>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Contact Info
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Job Details
                   </th>
                 </>
               )}
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+              <th
+                scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+              >
                 Status
               </th>
               <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -104,31 +131,38 @@ const CandidateTable = ({
                       </div>
                     </div>
                     <div className="ml-4">
-                      <div className="font-medium text-gray-900">{candidate.name}</div>
+                      <div className="font-medium text-gray-900">
+                        {candidate.name}
+                      </div>
                       <div className="text-gray-500">
-                        Added {new Date(candidate.createdAt).toLocaleDateString()}
+                        Added{" "}
+                        {new Date(candidate.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
                 </td>
-                
+
                 {showAll && (
                   <>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <div className="text-gray-900">{candidate.email}</div>
-                      <div>{candidate.phone || 'Not provided'}</div>
+                      <div>{candidate.phone || "Not provided"}</div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <div className="font-medium text-gray-900">{candidate.jobTitle}</div>
-                      <div>{candidate.jobDepartment || 'N/A'}</div>
+                      <div className="font-medium text-gray-900">
+                        {candidate.jobTitle}
+                      </div>
+                      <div>{candidate.jobDepartment || "N/A"}</div>
                     </td>
                   </>
                 )}
-                
+
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   <select
                     value={candidate.status}
-                    onChange={(e) => onStatusUpdate(candidate._id, e.target.value)}
+                    onChange={(e) =>
+                      onStatusUpdate(candidate._id, e.target.value)
+                    }
                     className={getStatusClasses(candidate.status)}
                   >
                     {statusOptions.map((option) => (
@@ -138,16 +172,46 @@ const CandidateTable = ({
                     ))}
                   </select>
                 </td>
-                
+
                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                   <div className="flex justify-end space-x-3">
                     <button
-                      onClick={() => onViewResume(candidate._id)}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      onClick={async () => {
+                        setLoadingResumeId(candidate._id);
+                        await onViewResume(candidate._id);
+                        setLoadingResumeId(null);
+                      }}
+                      className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
                       title="View resume"
+                      disabled={loadingResumeId === candidate._id}
                     >
-                      <EyeIcon className="h-5 w-5" aria-hidden="true" />
-                      <span className="sr-only">View resume for {candidate.name}</span>
+                      {loadingResumeId === candidate._id ? (
+                        <svg
+                          className="animate-spin h-5 w-5 text-indigo-600"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          />
+                        </svg>
+                      ) : (
+                        <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                      )}
+                      <span className="sr-only">
+                        View resume for {candidate.name}
+                      </span>
                     </button>
                     <button
                       onClick={() => onUpdateCandidate(candidate)}
