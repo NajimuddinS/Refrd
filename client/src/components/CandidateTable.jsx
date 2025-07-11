@@ -8,7 +8,7 @@ const CandidateTable = ({
   onStatusUpdate, 
   onDeleteCandidate, 
   onViewResume,
-  onEditCandidate,
+  onUpdateCandidate,
   searchTerm,
   showAll = false
 }) => {
@@ -150,12 +150,12 @@ const CandidateTable = ({
                       <span className="sr-only">View resume for {candidate.name}</span>
                     </button>
                     <button
-                      onClick={() => onEditCandidate(candidate)}
+                      onClick={() => onUpdateCandidate(candidate)}
                       className="text-gray-600 hover:text-gray-900"
-                      title="Edit candidate"
+                      title="Update candidate"
                     >
                       <PencilIcon className="h-5 w-5" aria-hidden="true" />
-                      <span className="sr-only">Edit {candidate.name}</span>
+                      <span className="sr-only">Update {candidate.name}</span>
                     </button>
                     <button
                       onClick={() => handleDeleteClick(candidate._id)}
