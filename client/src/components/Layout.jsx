@@ -1,6 +1,13 @@
 import { useAuth } from "../context/AuthContext";
 import { useLocation, NavLink } from "react-router-dom";
 import { useState } from "react";
+import { 
+  UserGroupIcon, // Better candidate icon
+  HomeIcon,
+  XMarkIcon,
+  Bars3Icon,
+  ArrowLeftOnRectangleIcon 
+} from "@heroicons/react/24/outline";
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
@@ -29,19 +36,7 @@ const Layout = ({ children }) => {
                 onClick={() => setSidebarOpen(false)}
               >
                 <span className="sr-only">Close sidebar</span>
-                <svg
-                  className="h-6 w-6 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <XMarkIcon className="h-6 w-6 text-white" />
               </button>
             </div>
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
@@ -67,23 +62,13 @@ const Layout = ({ children }) => {
                     }`
                   }
                 >
-                  <svg
+                  <HomeIcon
                     className={`mr-4 h-5 w-5 flex-shrink-0 ${
                       location.pathname === "/dashboard" 
                         ? "text-blue-400" 
                         : "text-gray-400 group-hover:text-blue-300"
                     }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
+                  />
                   Dashboard
                 </NavLink>
                 <NavLink
@@ -96,23 +81,13 @@ const Layout = ({ children }) => {
                     }`
                   }
                 >
-                  <svg
+                  <UserGroupIcon
                     className={`mr-4 h-5 w-5 flex-shrink-0 ${
                       location.pathname === "/candidates" 
                         ? "text-blue-400" 
                         : "text-gray-400 group-hover:text-blue-300"
                     }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                    />
-                  </svg>
+                  />
                   Candidates
                 </NavLink>
               </nav>
@@ -139,19 +114,7 @@ const Layout = ({ children }) => {
                   className="ml-auto flex-shrink-0 p-1 rounded-full text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                   title="Logout"
                 >
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5" />
                 </button>
               </div>
             </div>
@@ -185,23 +148,13 @@ const Layout = ({ children }) => {
                   }`
                 }
               >
-                <svg
+                <HomeIcon
                   className={`mr-4 h-5 w-5 flex-shrink-0 ${
                     location.pathname === "/dashboard" 
                       ? "text-blue-400" 
                       : "text-gray-400 group-hover:text-blue-300"
                   }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
+                />
                 Dashboard
               </NavLink>
               <NavLink
@@ -214,23 +167,13 @@ const Layout = ({ children }) => {
                   }`
                 }
               >
-                <svg
+                <UserGroupIcon
                   className={`mr-4 h-5 w-5 flex-shrink-0 ${
                     location.pathname === "/candidates" 
                       ? "text-blue-400" 
                       : "text-gray-400 group-hover:text-blue-300"
                   }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                  />
-                </svg>
+                />
                 Candidates
               </NavLink>
             </nav>
@@ -257,19 +200,7 @@ const Layout = ({ children }) => {
                 className="ml-auto flex-shrink-0 p-1 rounded-full text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                 title="Logout"
               >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
-                </svg>
+                <ArrowLeftOnRectangleIcon className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -285,19 +216,7 @@ const Layout = ({ children }) => {
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <Bars3Icon className="h-6 w-6" />
           </button>
         </div>
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none bg-gradient-to-br from-gray-50 to-gray-100">
