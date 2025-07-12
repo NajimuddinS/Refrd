@@ -8,9 +8,11 @@ const candidateRoutes = require('./routes/candidateRoutes');
 const app = express();
 
 app.use(cors({
-  origin:'*',
-  credentials:true
-})); 
+  origin: ['https://refrd.vercel.app'],
+  credentials: true,
+}));
+
+app.options('*', cors()); 
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
